@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ComDex</title>
+<style>
+:root{
+  --bg:#17171a;
+  --panel:#1d1d21;
+  --panel2:#26262b;
+  --panel3:#2f2f35;
+  --border-soft:#2a2a30;
+  --text:#edeef0;
+  --text-dim:#93939a;
+  --text-dim2:#6d6d74;
+  --accent:#8577f8;
+  --accent-strong:#7263f2;
+  --accent-soft:rgba(133,119,248,.15);
+  --danger:#f2495c;
+  --danger-soft:rgba(242,73,92,.14);
+  --model:#14b8a6;
+  --ok:#3ecf7e;
+  --radius-lg:22px;
+  --radius-md:14px;
+  --radius-sm:11px;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;margin:0;}
+body{
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  overflow-y:auto;
+  -webkit-font-smoothing:antialiased;
+}
+body::-webkit-scrollbar{width:9px;}
+body::-webkit-scrollbar-thumb{background:var(--panel3);border-radius:8px;}
+
+#particles{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+}
+
+.logo-corner{
+  position:fixed;
+  top:26px;
+  left:28px;
+  width:40px;
+  height:40px;
+  border-radius:var(--radius-sm);
+  overflow:hidden;
+  z-index:2;
+  background:var(--panel2);
+  box-shadow:0 6px 18px rgba(0,0,0,.4);
+}
+.logo-corner img{width:100%;height:100%;object-fit:cover;display:block;}
+
+.home-wrap{
+  position:relative;
+  z-index:1;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:120px 24px 70px;
+  gap:46px;
+}
+
+.hero{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:24px;
+  width:100%;
+  max-width:560px;
+}
+
+.btn-create{
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-strong));
+  color:#fff;
+  border:none;
+  width:100%;
+  padding:18px 24px;
+  border-radius:20px;
+  font-size:15.5px;
+  font-weight:600;
+  font-family:inherit;
+  cursor:pointer;
+  box-shadow:0 18px 44px rgba(133,119,248,.32);
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+.btn-create:hover{transform:translateY(-3px);box-shadow:0 22px 54px rgba(133,119,248,.42);}
+.btn-create:active{transform:translateY(-1px);}
+.btn-create .icon-circle{
+  width:32px;height:32px;
+  border-radius:10px;
+  background:rgba(255,255,255,.18);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.btn-create svg{width:17px;height:17px;}
+
+.action-row{display:flex;gap:16px;width:100%;}
+.action-card{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;
+  background:var(--panel);
+  border:1px solid var(--border-soft);
+  border-radius:20px;
+  padding:22px 14px;
+  flex:1;
+  min-width:0;
+  height:132px;
+  cursor:pointer;
+  font-family:inherit;
+  transition:transform .16s ease,border-color .16s ease,background .16s ease;
+}
+.action-card:hover{transform:translateY(-4px);border-color:var(--accent);background:var(--panel2);}
+.action-card:active{transform:translateY(-1px);}
+.action-card .icon-circle{
+  width:44px;height:44px;
+  border-radius:14px;
+  background:var(--panel3);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--accent);
+  flex-shrink:0;
+}
+.action-card .icon-circle svg{width:20px;height:20px;}
+.action-card span{font-size:13px;font-weight:600;color:var(--text);text-align:center;}
+
+.projects-section{width:100%;max-width:860px;}
+.projects-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.projects-head h2{margin:0;font-size:14px;font-weight:700;letter-spacing:.02em;color:var(--text);}
+.projects-head span{font-size:12px;color:var(--text-dim2);}
+
+.projects-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:16px;
+}
+
+.project-card{
+  background:var(--panel);
+  border:1px solid var(--border-soft);
+  border-radius:18px;
+  padding:14px;
+  display:flex;
+  align-items:center;
+  gap:14px;
+  position:relative;
+  cursor:pointer;
+  transition:transform .16s ease,border-color .16s ease;
+}
+.project-card:hover{transform:translateY(-3px);border-color:var(--accent);}
+
+.project-cover{
+  width:72px;
+  height:72px;
+  border-radius:14px;
+  background:var(--panel2);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  flex-shrink:0;
+  border:1px solid var(--border-soft);
+}
+.project-cover img{width:100%;height:100%;object-fit:cover;}
+.project-cover.fallback img{width:45%;height:45%;object-fit:contain;opacity:.7;}
+
+.project-info{
+  flex:1;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.project-name{
+  font-size:14px;
+  font-weight:600;
+  color:var(--text);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  padding-right:20px;
+}
+.project-date{font-size:11px;color:var(--text-dim2);}
+
+.project-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:4px;
+}
+.tag-bubble{
+  font-size:10px;
+  font-weight:600;
+  padding:3px 8px;
+  border-radius:999px;
+  background:var(--panel3);
+  color:var(--text-dim);
+}
+.tag-bubble.js{background:rgba(240,219,79,.15);color:#f0db4f;}
+.tag-bubble.json{background:rgba(242,162,75,.15);color:#f2a24b;}
+.tag-bubble.model{background:rgba(20,184,166,.15);color:var(--model);}
+.tag-bubble.other{background:var(--panel3);color:var(--text-dim2);}
+
+.project-actions-btn{
+  position:absolute;
+  top:12px;
+  right:10px;
+  width:28px;
+  height:28px;
+  border-radius:8px;
+  background:transparent;
+  border:none;
+  color:var(--text-dim);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:background .15s ease,color .15s ease;
+}
+.project-actions-btn:hover{background:var(--panel2);color:var(--text);}
+.project-actions-btn svg{width:16px;height:16px;}
+
+.context-menu{
+  position:fixed;
+  background:var(--panel2);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius-md);
+  padding:6px;
+  min-width:150px;
+  box-shadow:0 12px 30px rgba(0,0,0,.5);
+  z-index:100;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.context-menu-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px 10px;
+  border-radius:var(--radius-sm);
+  font-size:13px;
+  color:var(--text);
+  cursor:pointer;
+  background:transparent;
+  border:none;
+  width:100%;
+  text-align:left;
+  font-family:inherit;
+}
+.context-menu-item:hover{background:var(--panel3);}
+.context-menu-item.danger{color:var(--danger);}
+
+.fmt-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:16px 0 20px;
+}
+.fmt-card{
+  background:var(--panel2);
+  border:1.5px solid var(--border-soft);
+  border-radius:var(--radius-md);
+  padding:14px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  transition:border-color .15s ease, background .15s ease;
+}
+.fmt-card.active{
+  border-color:var(--accent);
+  background:var(--accent-soft);
+}
+.fmt-icon{
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  overflow:hidden;
+  background:var(--panel3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.fmt-icon img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+.fmt-icon svg{
+  width:20px;
+  height:20px;
+  color:var(--accent);
+}
+.fmt-info{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  min-width:0;
+}
+.fmt-name{
+  font-size:13px;
+  font-weight:600;
+  color:var(--text);
+}
+.fmt-desc{
+  font-size:11px;
+  color:var(--text-dim);
+}
+
+.empty-projects{
+  width:100%;
+  border:1px dashed var(--border-soft);
+  border-radius:18px;
+  padding:34px 20px;
+  text-align:center;
+  color:var(--text-dim2);
+  font-size:13px;
+}
+
+.overlay{
+  position:fixed;inset:0;
+  background:rgba(8,8,10,.62);
+  backdrop-filter:blur(3px);
+  display:flex;align-items:center;justify-content:center;
+  z-index:120;
+  padding:30px;
+}
+.modal{
+  background:var(--panel);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius-lg);
+  padding:28px;
+  width:400px;
+  max-width:90vw;
+  box-shadow:0 30px 70px rgba(0,0,0,.55);
+}
+.modal-wide{width:480px;max-height:80vh;display:flex;flex-direction:column;}
+.modal h3{margin:0 0 8px;font-size:16px;font-weight:600;}
+.modal p{margin:0 0 14px;font-size:13px;color:var(--text-dim);line-height:1.6;}
+.modal input{
+  width:100%;
+  background:var(--panel2);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius-sm);
+  padding:11px 14px;
+  color:var(--text);
+  font-size:13px;
+  outline:none;
+  margin-bottom:16px;
+  font-family:inherit;
+  transition:border-color .15s ease;
+}
+.modal input:focus{border-color:var(--accent);}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;}
+.btn{
+  padding:10px 18px;
+  border-radius:var(--radius-sm);
+  border:none;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  font-family:inherit;
+  transition:opacity .15s ease,transform .1s ease;
+}
+.btn:active{transform:scale(.97);}
+.btn-ghost{background:transparent;color:var(--text-dim);}
+.btn-ghost:hover{background:var(--panel2);color:var(--text);}
+.btn-primary{background:var(--accent);color:#fff;display:flex;align-items:center;gap:8px;}
+.btn-primary:hover{opacity:.9;}
+.btn-primary svg{width:15px;height:15px;}
+.btn-danger{background:var(--danger);color:#fff;}
+.btn-danger:hover{opacity:.9;}
+
+.warn-icon{
+  width:54px;height:54px;
+  border-radius:50%;
+  color:var(--danger);
+  background:var(--danger-soft);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;
+}
+.warn-icon svg{width:26px;height:26px;}
+.info-icon{
+  width:54px;height:54px;
+  border-radius:50%;
+  color:var(--accent);
+  background:var(--accent-soft);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;
+}
+.info-icon svg{width:26px;height:26px;}
+
+.progress-file{font-size:13px;color:var(--text);font-weight:600;margin-bottom:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.progress-track{width:100%;height:10px;background:var(--panel2);border-radius:999px;overflow:hidden;}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-strong));border-radius:999px;transition:width .25s ease;}
+.progress-meta{display:flex;justify-content:space-between;margin-top:10px;font-size:12px;color:var(--text-dim);}
+
+.guide-list{margin:0 0 4px;padding-left:18px;color:var(--text-dim);font-size:13px;line-height:1.9;}
+.guide-list b{color:var(--text);}
+
+.result-header{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+.result-header .icon-circle{
+  width:42px;height:42px;border-radius:13px;
+  background:var(--accent-soft);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.result-header .icon-circle svg{width:19px;height:19px;}
+.result-title{font-size:15px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.result-sub{font-size:12px;color:var(--text-dim);margin:2px 0 16px;}
+
+.result-tree{
+  flex:1;
+  overflow-y:auto;
+  margin:0 -8px;
+  padding:0 8px;
+}
+.result-tree::-webkit-scrollbar{width:8px;}
+.result-tree::-webkit-scrollbar-thumb{background:var(--panel3);border-radius:8px;}
+
+.rnode-row{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 9px;
+  border-radius:var(--radius-sm);
+  cursor:pointer;
+  font-size:13px;
+  color:var(--text-dim);
+  transition:background .12s ease;
+}
+.rnode-row:hover{background:var(--panel2);color:var(--text);}
+.rchevron{width:13px;height:13px;flex-shrink:0;color:var(--text-dim2);transition:transform .18s ease;}
+.rnode.open>.rnode-row .rchevron{transform:rotate(90deg);}
+.rchevron.hidden{visibility:hidden;}
+.rnode-icon{width:17px;height:17px;flex-shrink:0;color:#8577f8;display:flex;align-items:center;justify-content:center;}
+.file-badge{
+  width:18px;height:18px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:7.5px;font-weight:800;letter-spacing:-.02em;flex-shrink:0;
+}
+.file-badge svg{width:11px;height:11px;}
+.thumb{width:20px;height:20px;border-radius:6px;object-fit:cover;flex-shrink:0;border:1px solid var(--border-soft);}
+.rnode-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rnode-count{
+  font-size:10px;font-weight:600;color:var(--text-dim);
+  background:var(--panel3);padding:2px 7px;border-radius:999px;flex-shrink:0;
+}
+.rchildren-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .2s ease;}
+.rnode.open>.rchildren-wrap{grid-template-rows:1fr;}
+.rchildren-inner{overflow:hidden;min-height:0;}
+.rchildren{padding-left:15px;margin-top:2px;position:relative;}
+.rchildren::before{content:'';position:absolute;left:15px;top:2px;bottom:8px;width:1px;background:var(--border-soft);}
+
+.wizard-overlay .modal{
+  width:560px;
+  max-width:94vw;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  max-height:88vh;
+}
+.wizard-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;
+  border-bottom:1px solid var(--border-soft);
+  flex-shrink:0;
+}
+.wizard-header h3{margin:0;font-size:15.5px;}
+.wizard-close{
+  width:30px;height:30px;border-radius:99px;border:none;background:transparent;
+  color:var(--text-dim);display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+.wizard-close:hover{background:var(--panel2);color:var(--text);}
+.wizard-close svg{width:16px;height:16px;}
+
+.wizard-scroll{
+  overflow-y:auto;
+  padding:22px 24px;
+  flex:1;
+}
+.wizard-scroll::-webkit-scrollbar{width:8px;}
+.wizard-scroll::-webkit-scrollbar-thumb{background:var(--panel3);border-radius:8px;}
+
+.wizard-footer{
+  display:flex;justify-content:flex-end;gap:8px;
+  padding:16px 24px;
+  border-top:1px solid var(--border-soft);
+  flex-shrink:0;
+}
+
+.section-title{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--text-dim2);margin:22px 0 10px;}
+.section-title:first-child{margin-top:0;}
+
+.pack-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.pack-card{
+  grid-column:1/-1;
+  background:var(--panel2);
+  border:1.5px solid var(--border-soft);
+  border-radius:16px;
+  padding:16px;
+  cursor:pointer;
+  transition:border-color .15s ease,background .15s ease;
+}
+.pack-card.half{grid-column:span 1;}
+.pack-card.active{border-color:var(--accent);background:rgba(133,119,248,.08);}
+.pack-card-top{display:flex;align-items:flex-start;gap:12px;}
+.pack-card .icon-circle{
+  width:36px;height:36px;border-radius:11px;
+  background:var(--panel3);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--accent);flex-shrink:0;
+}
+.pack-card .icon-circle svg{width:17px;height:17px;}
+.pack-card-title{font-size:14px;font-weight:600;color:var(--text);}
+.status-toggle{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12px;color:var(--text-dim);cursor:pointer;}
+.status-toggle svg{width:15px;height:15px;flex-shrink:0;}
+.status-toggle.on{color:var(--ok);}
+.pack-desc{font-size:12px;color:var(--text-dim);line-height:1.55;margin:10px 0 0;}
+.dep-row{
+  display:flex;align-items:center;gap:10px;
+  margin-top:12px;
+  padding-top:12px;
+  border-top:1px solid var(--border-soft);
+}
+.dep-row span{font-size:12px;color:var(--text-dim);line-height:1.4;}
+
+.pill-switch{
+  width:38px;height:22px;border-radius:999px;
+  background:var(--panel3);
+  position:relative;flex-shrink:0;cursor:pointer;
+  transition:background .15s ease;
+}
+.pill-switch.on{background:var(--accent);}
+.pill-switch::after{
+  content:'';
+  position:absolute;top:2.5px;left:2.5px;
+  width:17px;height:17px;border-radius:50%;
+  background:#e8e8ea;
+  transition:transform .15s ease;
+}
+.pill-switch.on::after{transform:translateX(16px);background:#fff;}
+
+.collapse-box{border:1px solid var(--border-soft);border-radius:16px;overflow:hidden;}
+.collapse-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;
+  cursor:pointer;
+  background:var(--panel2);
+  font-size:13px;font-weight:600;color:var(--text);
+}
+.collapse-head svg{width:15px;height:15px;color:var(--text-dim);transition:transform .18s ease;}
+.collapse-box.open .collapse-head svg{transform:rotate(180deg);}
+.collapse-body-wrap{display:grid;grid-template-rows:0fr;transition:grid-template-rows .2s ease;}
+.collapse-box.open .collapse-body-wrap{grid-template-rows:1fr;}
+.collapse-body-inner{overflow:hidden;min-height:0;}
+.collapse-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+.mini-card{
+  background:var(--panel);
+  border:1px solid var(--border-soft);
+  border-radius:13px;
+  padding:12px;
+  cursor:pointer;
+  transition:border-color .15s ease;
+}
+.mini-card.active{border-color:var(--accent);}
+.mini-card-top{display:flex;align-items:center;gap:8px;}
+.mini-card .icon-circle{
+  width:26px;height:26px;border-radius:8px;
+  background:var(--panel3);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.mini-card .icon-circle svg{width:13px;height:13px;}
+.mini-card-title{font-size:12.5px;font-weight:600;color:var(--text);line-height:1.3;}
+.mini-card-tag{font-size:10px;color:var(--text-dim2);margin-top:2px;}
+.mini-status{display:flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;color:var(--text-dim);}
+.mini-status svg{width:12px;height:12px;}
+.mini-status.on{color:var(--ok);}
+.mini-desc{font-size:11.5px;color:var(--text-dim);line-height:1.5;margin-top:6px;}
+
+.form-row{display:flex;gap:12px;margin-top:12px;}
+.form-row:first-of-type{margin-top:0;}
+.form-col{flex:1;min-width:0;}
+.form-col label{display:block;font-size:11px;font-weight:600;color:var(--text-dim2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.03em;}
+.form-col input, .form-col select, .form-col textarea{
+  width:100%;
+  background:var(--panel2);
+  border:1px solid var(--border-soft);
+  border-radius:var(--radius-sm);
+  padding:10px 12px;
+  color:var(--text);
+  font-size:13px;
+  outline:none;
+  font-family:inherit;
+  transition:border-color .15s ease;
+}
+.form-col input:focus, .form-col select:focus, .form-col textarea:focus{border-color:var(--accent);}
+.form-col textarea{resize:vertical;min-height:64px;}
+
+.cover-row{display:flex;gap:12px;align-items:flex-start;}
+.cover-picker{
+  width:78px;height:78px;
+  border-radius:16px;
+  border:1px dashed var(--border-soft);
+  background:var(--panel2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+  overflow:hidden;
+  flex-shrink:0;
+  color:var(--text-dim2);
+  transition:border-color .15s ease;
+}
+.cover-picker:hover{border-color:var(--accent);color:var(--accent);}
+.cover-picker img{width:100%;height:100%;object-fit:cover;}
+.cover-picker svg{width:24px;height:24px;}
+
+.toggle-line{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:14px;
+  padding:12px 0;
+  border-top:1px solid var(--border-soft);
+}
+.toggle-line span{font-size:12.5px;color:var(--text-dim);line-height:1.5;}
+
+@media (max-width: 600px) {
+  .home-wrap{padding:80px 16px 40px;gap:32px;}
+  .action-row{flex-direction:row;gap:10px;}
+  .action-card{padding:14px 8px;height:110px;}
+  .action-card .icon-circle{width:36px;height:36px;}
+  .action-card span{font-size:11px;}
+  .projects-grid{grid-template-columns:1fr;}
+  .pack-grid{grid-template-columns:1fr;}
+  .pack-card.half{grid-column:span 1;}
+  .collapse-body{grid-template-columns:1fr;}
+  .form-row{flex-direction:column;gap:10px;}
+  .fmt-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="logo-corner"><img src="img/logo.jpg" alt="Logo"></div>
+
+<div class="home-wrap">
+  <div class="hero">
+    <button class="btn-create" id="createBtn">
+      <span class="icon-circle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      </span>
+      Crear Proyecto
+    </button>
+
+    <div class="action-row">
+      <button class="action-card" id="uploadCard">
+        <span class="icon-circle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/><path d="M12 16v-5M9.5 13.5 12 11l2.5 2.5"/></svg>
+        </span>
+        <span>Subir Complemento</span>
+      </button>
+      <button class="action-card" id="versionCard">
+        <span class="icon-circle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r="1" fill="currentColor" stroke="none"/></svg>
+        </span>
+        <span>Versión</span>
+      </button>
+      <button class="action-card" id="guideCard">
+        <span class="icon-circle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H12v18H6.5A2.5 2.5 0 0 1 4 18.5v-13Z"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H12v18h5.5a2.5 2.5 0 0 0 2.5-2.5v-13Z"/></svg>
+        </span>
+        <span>Guía</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="projects-section">
+    <div class="projects-head">
+      <h2>Proyectos Guardados</h2>
+      <span id="projectsCount"></span>
+    </div>
+    <div id="projectsArea"></div>
+  </div>
+</div>
+
+<input type="file" id="addonInput" accept=".mcaddon,.mcpack,.zip" style="display:none">
+<input type="file" id="coverInput" accept="image/*" style="display:none">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+const ICONS = {
+  folderClosed: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2.5h8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>',
+  folderOpen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.2A2 2 0 0 1 5 6.2h3.6l1.8 2.1H19a2 2 0 0 1 1.94 2.47l-1.18 5.1A2 2 0 0 1 17.8 17.4H5.4a2 2 0 0 1-1.95-1.56L2.06 10.2A2 2 0 0 1 3 8.2Z"/><path d="M3 8.2 5.4 6.2"/></svg>',
+  file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-6-5Z"/><path d="M13 3v5h6"/></svg>',
+  image: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m21 15-5-5-9 9"/></svg>',
+  cube: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="M4 7.5 12 12l8-4.5"/><path d="M12 12v9"/></svg>',
+  chevron: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>',
+  chevronDown: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>',
+  warn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4.5"/><circle cx="12" cy="17.3" r=".2" fill="currentColor"/></svg>',
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/><circle cx="12" cy="7.8" r="1" fill="currentColor" stroke="none"/></svg>',
+  package: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>',
+  wrench: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.8 2.8-2-2 2.8-2.8Z"/></svg>',
+  person: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg>',
+  globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18Z"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
+  camera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7h2l1-1.5h7L16.5 7h2A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5v-9Z"/><circle cx="12" cy="13" r="3.2"/></svg>',
+  brackets: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m8 8-4 4 4 4M16 8l4 4-4 4"/></svg>',
+  gradCap: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 10-5 10 5-10 5-10-5Z"/><path d="M6 11v4c0 1.5 2.7 3 6 3s6-1.5 6-3v-4"/></svg>',
+  dragon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="m21 15-5-5-9 9"/><path d="M17 3.5v3M15.5 5h3"/></svg>',
+  close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  checkCircle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.3 2.3L16 10"/></svg>',
+  circleEmpty: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>',
+  plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>',
+  dots: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>'
+};
+
+const FILE_TYPES = {
+  js:{bg:'#f0db4f',color:'#1c1c1c',label:'JS'},
+  mjs:{bg:'#f0db4f',color:'#1c1c1c',label:'JS'},
+  cjs:{bg:'#f0db4f',color:'#1c1c1c',label:'JS'},
+  jsx:{bg:'#61dafb',color:'#0b1b26',label:'JSX'},
+  ts:{bg:'#3178c6',color:'#fff',label:'TS'},
+  tsx:{bg:'#3178c6',color:'#fff',label:'TSX'},
+  json:{bg:'#f2a24b',color:'#1c1c1c',label:'{ }'},
+  html:{bg:'#e34c26',color:'#fff',label:'<>'},
+  htm:{bg:'#e34c26',color:'#fff',label:'<>'},
+  css:{bg:'#2965f1',color:'#fff',label:'#'},
+  scss:{bg:'#c76494',color:'#fff',label:'#'},
+  md:{bg:'#63b3ed',color:'#0b1220',label:'M↓'},
+  py:{bg:'#3572a5',color:'#fff',label:'Py'},
+  yml:{bg:'#a8324a',color:'#fff',label:'YML'},
+  yaml:{bg:'#a8324a',color:'#fff',label:'YML'},
+  txt:{bg:'#5a5a62',color:'#fff',label:'TXT'},
+  sh:{bg:'#4eaa25',color:'#fff',label:'SH'},
+  lang:{bg:'#20c997',color:'#0b1220',label:'LANG'},
+  material:{bg:'#e879f9',color:'#1c0a1c',label:'MTL'}
+};
+const IMAGE_EXTS = ['png','jpg','jpeg','gif','webp','svg','bmp','ico'];
+const MODEL_EXTS = ['obj','fbx','glb','gltf','bbmodel'];
+const TEXT_EXTS = ['json','js','mjs','cjs','ts','tsx','jsx','md','txt','css','html','htm','yml','yaml','lang','mcfunction','xml','cfg','ini','sh'];
+const MC_VERSIONS = ['1.20.80','1.20.90','1.21.0','1.21.20','1.21.40','1.21.60','1.21.80'];
+
+const INDEX_KEY = 'devstudio_projects_index';
+const PROJECT_PREFIX = 'devstudio_project_';
+let activeContextMenu = null;
+
+function getExt(name){
+  return name.includes('.') ? name.split('.').pop().toLowerCase() : '';
+}
+
+function isModelFile(path, name){
+  const ext = getExt(name);
+  if (MODEL_EXTS.includes(ext)) return true;
+  if (ext === 'json' && /(^|\/)models(\/|$)/i.test(path)) return true;
+  return false;
+}
+
+function genId(){ return 'n' + Math.random().toString(36).slice(2, 10); }
+
+function genUUID(){
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+function getProjectsIndex(){
+  try { return JSON.parse(localStorage.getItem(INDEX_KEY) || '[]'); } catch(e){ return []; }
+}
+
+function saveProjectsIndex(list){
+  localStorage.setItem(INDEX_KEY, JSON.stringify(list));
+}
+
+function registerProject(id, name, cover){
+  const list = getProjectsIndex().filter(p => p.id !== id);
+  list.unshift({ id, name, cover: cover || null, updatedAt: Date.now() });
+  saveProjectsIndex(list);
+}
+
+function saveProjectData(id, name, root){
+  localStorage.setItem(PROJECT_PREFIX + id, JSON.stringify({ id, name, root }));
+}
+
+function getProjectData(id){
+  try {
+    const raw = localStorage.getItem(PROJECT_PREFIX + id);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) {
+    return null;
+  }
+}
+
+function removeProject(id){
+  const list = getProjectsIndex().filter(p => p.id !== id);
+  saveProjectsIndex(list);
+  localStorage.removeItem(PROJECT_PREFIX + id);
+}
+
+function closeModal(){
+  const overlay = document.getElementById('modalOverlay');
+  if (overlay) overlay.remove();
+}
+
+function showModal(html, mountFn, extraClass){
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay' + (extraClass ? ' ' + extraClass : '');
+  overlay.id = 'modalOverlay';
+  overlay.innerHTML = html;
+  overlay.addEventListener('mousedown', (e) => {
+    if (e.target === overlay) closeModal();
+  });
+  document.body.appendChild(overlay);
+  if (mountFn) mountFn(overlay);
+}
+
+function formatDate(ts){
+  try { return new Date(ts).toLocaleDateString('es-ES', { day:'2-digit', month:'short', year:'numeric' }); }
+  catch(e){ return ''; }
+}
+
+function scanProjectTags(rootNode){
+  let hasJs = false;
+  let hasJson = false;
+  let hasModel = false;
+  let hasOther = false;
+
+  function traverse(node){
+    if(!node) return;
+    if(node.type === 'file'){
+      const ext = getExt(node.name);
+      if(node.isModel || MODEL_EXTS.includes(ext)){
+        hasModel = true;
+      } else if(['js','mjs','cjs','ts','tsx','jsx'].includes(ext)){
+        hasJs = true;
+      } else if(ext === 'json'){
+        hasJson = true;
+      } else {
+        hasOther = true;
+      }
+    }
+    if(node.children && Array.isArray(node.children)){
+      node.children.forEach(traverse);
+    }
+  }
+
+  traverse(rootNode);
+
+  const tags = [];
+  if(hasJs) tags.push({ label: 'JS', cls: 'js' });
+  if(hasJson) tags.push({ label: 'Json', cls: 'json' });
+  if(hasModel) tags.push({ label: 'Modelos', cls: 'model' });
+  if(hasOther || tags.length === 0) tags.push({ label: 'Otros', cls: 'other' });
+
+  return tags;
+}
+
+function closeContextMenu(){
+  if(activeContextMenu){
+    activeContextMenu.remove();
+    activeContextMenu = null;
+  }
+}
+
+document.addEventListener('click', () => closeContextMenu());
+
+function renderProjects(){
+  const list = getProjectsIndex().sort((a, b) => b.updatedAt - a.updatedAt);
+  const area = document.getElementById('projectsArea');
+  const countEl = document.getElementById('projectsCount');
+  countEl.textContent = list.length ? (list.length + (list.length === 1 ? ' proyecto' : ' proyectos')) : '';
+
+  if (!list.length){
+    area.innerHTML = `<div class="empty-projects">Todavía no tienes proyectos guardados. Crea uno nuevo o sube un complemento para empezar.</div>`;
+    return;
+  }
+
+  const grid = document.createElement('div');
+  grid.className = 'projects-grid';
+  list.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'project-card';
+    
+    const projectData = getProjectData(p.id);
+    let tags = [{ label: 'Otros', cls: 'other' }];
+    if (projectData && projectData.root) {
+      tags = scanProjectTags(projectData.root);
+    }
+
+    const coverHtml = p.cover
+      ? `<div class="project-cover"><img src="${p.cover}" alt="${p.name}"></div>`
+      : `<div class="project-cover fallback"><img src="img/logo.jpg" alt="${p.name}"></div>`;
+    
+    const tagsHtml = tags.map(t => `<span class="tag-bubble ${t.cls}">${t.label}</span>`).join('');
+
+    card.innerHTML = `
+      ${coverHtml}
+      <div class="project-info">
+        <div class="project-name" title="${p.name}">${p.name}</div>
+        <div class="project-date">${formatDate(p.updatedAt)}</div>
+        <div class="project-tags">${tagsHtml}</div>
+      </div>
+      <button class="project-actions-btn" aria-label="Opciones">${ICONS.dots}</button>
+    `;
+
+    card.addEventListener('click', (e) => {
+      if(e.target.closest('.project-actions-btn')) return;
+      window.location.href = 'ed/co?id=' + p.id;
+    });
+
+    const dotsBtn = card.querySelector('.project-actions-btn');
+    dotsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeContextMenu();
+
+      const menu = document.createElement('div');
+      menu.className = 'context-menu';
+      menu.innerHTML = `
+        <button class="context-menu-item" id="optRename">Renombrar</button>
+        <button class="context-menu-item" id="optDownload">Descargar</button>
+        <button class="context-menu-item danger" id="optDelete">Eliminar</button>
+      `;
+
+      const rect = dotsBtn.getBoundingClientRect();
+      menu.style.top = (rect.bottom + 4) + 'px';
+      menu.style.left = Math.min(rect.left, window.innerWidth - 160) + 'px';
+
+      document.body.appendChild(menu);
+      activeContextMenu = menu;
+
+      menu.querySelector('#optRename').addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        closeContextMenu();
+        showRenameModal(p);
+      });
+
+      menu.querySelector('#optDownload').addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        closeContextMenu();
+        showDownloadModal(p);
+      });
+
+      menu.querySelector('#optDelete').addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        closeContextMenu();
+        showDeleteModal(p);
+      });
+    });
+
+    grid.appendChild(card);
+  });
+  area.innerHTML = '';
+  area.appendChild(grid);
+}
+
+function showRenameModal(p){
+  showModal(`
+    <div class="modal">
+      <h3>Renombrar Proyecto</h3>
+      <p>Introduce un nuevo nombre para tu proyecto.</p>
+      <input type="text" id="renameInput" value="${p.name}">
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="renameCancel">Cancelar</button>
+        <button class="btn btn-primary" id="renameConfirm">Guardar</button>
+      </div>
+    </div>
+  `, (overlay) => {
+    const input = overlay.querySelector('#renameInput');
+    input.focus();
+    input.select();
+    overlay.querySelector('#renameCancel').onclick = closeModal;
+    overlay.querySelector('#renameConfirm').onclick = () => {
+      const newName = input.value.trim();
+      if(newName){
+        registerProject(p.id, newName, p.cover);
+        const data = getProjectData(p.id);
+        if(data){
+          saveProjectData(p.id, newName, data.root);
+        }
+        renderProjects();
+        closeModal();
+      }
+    };
+  });
+}
+
+function showDeleteModal(p){
+  showModal(`
+    <div class="modal">
+      <div class="warn-icon">${ICONS.warn}</div>
+      <h3>¿Eliminar proyecto?</h3>
+      <p>Estás a punto de eliminar <b>"${p.name}"</b>. Esta acción no se puede deshacer y perderás todos los archivos.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="delCancel">Cancelar</button>
+        <button class="btn btn-danger" id="delConfirm">Eliminar</button>
+      </div>
+    </div>
+  `, (overlay) => {
+    overlay.querySelector('#delCancel').onclick = closeModal;
+    overlay.querySelector('#delConfirm').onclick = () => {
+      removeProject(p.id);
+      renderProjects();
+      closeModal();
+    };
+  });
+}
+
+function zipAddFolder(zip, node){
+  if (!node.children) return;
+  node.children.forEach(child => {
+    if (child.type === 'folder'){
+      const sub = zip.folder(child.name);
+      zipAddFolder(sub, child);
+    } else {
+      let data = child.content || '';
+      if (typeof data === 'string' && data.startsWith('data:')){
+        const base64Str = data.split(',')[1] || '';
+        zip.file(child.name, base64Str, { base64: true });
+      } else {
+        zip.file(child.name, data);
+      }
+    }
+  });
+}
+
+function showDownloadModal(p){
+  const data = getProjectData(p.id);
+  if (!data || !data.root){
+    showErrorModal('No se encontraron los datos del proyecto.');
+    return;
+  }
+  const rootNode = data.root;
+  let selectedFmt = 'mcaddon';
+
+  showModal(`
+    <div class="modal">
+      <h3>Descargar Proyecto</h3>
+      <p>Elige el formato de exportación para tu complemento de Minecraft.</p>
+      <div class="fmt-grid">
+        <div class="fmt-card active" data-fmt="mcaddon">
+          <div class="fmt-icon">${ICONS.package}</div>
+          <div class="fmt-info">
+            <div class="fmt-name">.mcaddon</div>
+            <div class="fmt-desc">Instalación automática completa</div>
+          </div>
+        </div>
+        <div class="fmt-card" data-fmt="zip">
+          <div class="fmt-icon">${ICONS.file}</div>
+          <div class="fmt-info">
+            <div class="fmt-name">.zip</div>
+            <div class="fmt-desc">Archivo comprimido estándar</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="dlCancel">Cancelar</button>
+        <button class="btn btn-primary" id="dlConfirm">Descargar</button>
+      </div>
+    </div>
+  `, (overlay) => {
+    const cards = overlay.querySelectorAll('.fmt-card');
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        cards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        selectedFmt = card.getAttribute('data-fmt');
+      });
+    });
+
+    overlay.querySelector('#dlCancel').onclick = closeModal;
+    overlay.querySelector('#dlConfirm').onclick = async () => {
+      const btn = overlay.querySelector('#dlConfirm');
+      btn.disabled = true;
+      btn.textContent = 'Generando...';
+
+      try {
+        const zip = new JSZip();
+        zipAddFolder(zip, rootNode);
+        const blob = await zip.generateAsync({ type: 'blob' });
+        const ext = selectedFmt === 'mcaddon' ? '.mcaddon' : '.zip';
+        const filename = (p.name || 'proyecto').replace(/[^a-z0-9_-]/gi, '_') + ext;
+
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        closeModal();
+      } catch(e) {
+        btn.disabled = false;
+        btn.textContent = 'Descargar';
+        showErrorModal('No se pudo generar el archivo de descarga.');
+      }
+    };
+  });
+}
+
+document.getElementById('versionCard').addEventListener('click', () => {
+  showModal(`
+    <div class="modal">
+      <div class="info-icon">${ICONS.info}</div>
+      <h3>Versión</h3>
+      <p>ComDex v1.0.0<br>Editor de complementos para Minecraft Bedrock.</p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="versionClose">Cerrar</button>
+      </div>
+    </div>
+  `, (overlay) => {
+    overlay.querySelector('#versionClose').onclick = closeModal;
+  });
+});
+
+document.getElementById('guideCard').addEventListener('click', () => {
+  showModal(`
+    <div class="modal">
+      <div class="info-icon">${ICONS.info}</div>
+      <h3>Guía rápida</h3>
+      <p>Pasos básicos para empezar a trabajar con tus complementos.</p>
+      <ul class="guide-list">
+        <li><b>Crear Proyecto</b> — define behavior pack, resource pack y otros datos, luego abre el editor.</li>
+        <li><b>Subir Complemento</b> — carga un archivo .mcaddon existente para explorar su contenido.</li>
+        <li>Las carpetas del complemento se pueden abrir y cerrar para revisar su estructura.</li>
+        <li>Las imágenes se muestran en miniatura y los modelos 3D con su propio ícono.</li>
+      </ul>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="guideClose">Entendido</button>
+      </div>
+    </div>
+  `, (overlay) => {
+    overlay.querySelector('#guideClose').onclick = closeModal;
+  });
+});
+
+document.getElementById('uploadCard').addEventListener('click', () => {
+  document.getElementById('addonInput').click();
+});
+
+function showProgressModal(fileName){
+  showModal(`
+    <div class="modal">
+      <div class="info-icon">${ICONS.package}</div>
+      <h3>Procesando complemento</h3>
+      <div class="progress-file" id="progressFileName">${fileName}</div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-meta">
+        <span id="progressStage">Leyendo archivo...</span>
+        <span id="progressPct">0%</span>
+      </div>
+    </div>
+  `);
+}
+
+function updateProgress(pct, stage){
+  const fill = document.getElementById('progressFill');
+  const pctEl = document.getElementById('progressPct');
+  const stageEl = document.getElementById('progressStage');
+  if (!fill) return;
+  const clamped = Math.max(0, Math.min(100, pct));
+  fill.style.width = clamped + '%';
+  pctEl.textContent = Math.round(clamped) + '%';
+  if (stage) stageEl.textContent = stage;
+}
+
+function showErrorModal(message){
+  showModal(`
+    <div class="modal">
+      <div class="warn-icon">${ICONS.warn}</div>
+      <h3>Error al cargar el complemento</h3>
+      <p style="text-align:center;margin-top:8px;">${message}</p>
+      <div class="modal-actions" style="justify-content:center;">
+        <button class="btn btn-primary" id="errorClose">Entendido</button>
+      </div>
+    </div>
+  `, (overlay) => {
+    overlay.querySelector('#errorClose').onclick = closeModal;
+  });
+}
+
+function readFileWithProgress(file, onProgress){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onprogress = (e) => {
+      if (e.lengthComputable) onProgress(e.loaded / e.total);
+    };
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function ensureFolderChain(root, cache, parts){
+  let current = root;
+  let currentPath = '';
+  parts.forEach(part => {
+    if (!part) return;
+    const nextPath = currentPath ? currentPath + '/' + part : part;
+    if (!cache[nextPath]){
+      const folderNode = { id: genId(), type: 'folder', name: part, open: false, children: [] };
+      current.children.push(folderNode);
+      cache[nextPath] = folderNode;
+    }
+    current = cache[nextPath];
+    currentPath = nextPath;
+  });
+  return current;
+}
+
+function findManifestName(node){
+  if (node.type === 'file' && node.name.toLowerCase() === 'manifest.json' && node.content){
+    try {
+      const parsed = JSON.parse(node.content);
+      if (parsed.header && parsed.header.name) return parsed.header.name;
+    } catch(e){}
+  }
+  if (node.children){
+    for (const child of node.children){
+      const found = findManifestName(child);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+function findCoverImage(node){
+  if (node.type === 'file' && /^pack_icon\./i.test(node.name) && node.content) return node.content;
+  if (node.children){
+    for (const child of node.children){
+      const found = findCoverImage(child);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
+async function processAddon(file){
+  showProgressModal(file.name);
+  try {
+    updateProgress(3, 'Leyendo archivo...');
+    const arrayBuffer = await readFileWithProgress(file, (pct) => {
+      updateProgress(3 + pct * 37, 'Leyendo archivo...');
+    });
+
+    updateProgress(42, 'Analizando complemento...');
+    const zip = await JSZip.loadAsync(arrayBuffer);
+
+    updateProgress(52, 'Extrayendo contenido...');
+    const extractedRoot = { id: 'root', type: 'folder', name: 'root', open: true, children: [] };
+    const cache = { '': extractedRoot };
+    const entries = Object.keys(zip.files);
+    const total = entries.length || 1;
+    let processed = 0;
+
+    for (const relPath of entries){
+      const entry = zip.files[relPath];
+      const fullParts = relPath.replace(/\/$/, '').split('/').filter(Boolean);
+
+      if (entry.dir){
+        ensureFolderChain(extractedRoot, cache, fullParts);
+      } else {
+        const fileName = fullParts.pop();
+        const parentFolder = ensureFolderChain(extractedRoot, cache, fullParts);
+        const ext = getExt(fileName);
+        let content = '';
+        if (IMAGE_EXTS.includes(ext)){
+          try {
+            const base64 = await entry.async('base64');
+            const mime = ext === 'svg' ? 'svg+xml' : ext;
+            content = 'data:image/' + mime + ';base64,' + base64;
+          } catch(e){
+            content = '';
+          }
+        } else if (TEXT_EXTS.includes(ext)){
+          try { content = await entry.async('string'); } catch(e){ content = ''; }
+        }
+        parentFolder.children.push({
+          id: genId(),
+          type: 'file',
+          name: fileName,
+          content,
+          isModel: isModelFile(relPath, fileName)
+        });
+      }
+
+      processed += 1;
+      updateProgress(52 + (processed / total) * 46, 'Procesando ' + relPath);
+    }
+
+    extractedRoot.children.forEach(child => { if (child.type === 'folder') child.open = true; });
+
+    updateProgress(100, 'Completado');
+    await new Promise(r => setTimeout(r, 350));
+
+    const manifestName = findManifestName(extractedRoot);
+    const cover = findCoverImage(extractedRoot);
+    const displayName = manifestName || file.name.replace(/\.[^.]+$/, '');
+    showResultModal(displayName, extractedRoot, cover);
+  } catch (e){
+    showErrorModal('Asegúrate de que sea un complemento válido (.mcaddon) y vuelve a intentarlo.');
+  }
+}
+
+function countAll(node){
+  let folders = 0, files = 0;
+  node.children.forEach(child => {
+    if (child.type === 'folder'){
+      folders += 1;
+      const nested = countAll(child);
+      folders += nested.folders;
+      files += nested.files;
+    } else {
+      files += 1;
+    }
+  });
+  return { folders, files };
+}
+
+function fileBadgeHtml(node){
+  if (node.isModel){
+    return `<div class="file-badge" style="background:var(--model);color:#fff">${ICONS.cube}</div>`;
+  }
+  const ext = getExt(node.name);
+  if (IMAGE_EXTS.includes(ext)){
+    if (node.content) return `<img class="thumb" src="${node.content}" alt="${node.name}">`;
+    return `<div class="file-badge" style="background:#a855f7;color:#fff">${ICONS.image}</div>`;
+  }
+  if (FILE_TYPES[ext]){
+    const meta = FILE_TYPES[ext];
+    return `<div class="file-badge" style="background:${meta.bg};color:${meta.color}">${meta.label}</div>`;
+  }
+  return `<div class="rnode-icon">${ICONS.file}</div>`;
+}
+
+function renderResultNode(node, depth){
+  const wrap = document.createElement('div');
+  wrap.className = 'rnode' + (node.type === 'folder' && node.open ? ' open' : '');
+
+  const row = document.createElement('div');
+  row.className = 'rnode-row';
+  row.style.paddingLeft = (9 + depth * 14) + 'px';
+
+  const chevron = document.createElement('div');
+  chevron.className = 'rchevron' + (node.type === 'file' ? ' hidden' : '');
+  chevron.innerHTML = ICONS.chevron;
+  row.appendChild(chevron);
+
+  let icon = null;
+  if (node.type === 'folder'){
+    icon = document.createElement('div');
+    icon.className = 'rnode-icon';
+    icon.innerHTML = node.open ? ICONS.folderOpen : ICONS.folderClosed;
+    row.appendChild(icon);
+  } else {
+    row.insertAdjacentHTML('beforeend', fileBadgeHtml(node));
+  }
+
+  const name = document.createElement('div');
+  name.className = 'rnode-name';
+  name.textContent = node.name;
+  row.appendChild(name);
+
+  if (node.type === 'folder'){
+    const count = document.createElement('div');
+    count.className = 'rnode-count';
+    count.textContent = node.children.length;
+    row.appendChild(count);
+    row.addEventListener('click', () => {
+      node.open = !node.open;
+      wrap.classList.toggle('open', node.open);
+      icon.innerHTML = node.open ? ICONS.folderOpen : ICONS.folderClosed;
+    });
+  }
+
+  wrap.appendChild(row);
+
+  if (node.type === 'folder'){
+    const childrenWrap = document.createElement('div');
+    childrenWrap.className = 'rchildren-wrap';
+    const inner = document.createElement('div');
+    inner.className = 'rchildren-inner';
+    const childrenEl = document.createElement('div');
+    childrenEl.className = 'rchildren';
+    node.children.forEach(child => childrenEl.appendChild(renderResultNode(child, depth + 1)));
+    inner.appendChild(childrenEl);
+    childrenWrap.appendChild(inner);
+    wrap.appendChild(childrenWrap);
+  }
+
+  return wrap;
+}
+
+function showResultModal(displayName, extractedRoot, cover){
+  const totals = countAll(extractedRoot);
+  showModal(`
+    <div class="modal modal-wide">
+      <div class="result-header">
+        <div class="icon-circle">${ICONS.package}</div>
+        <div style="min-width:0">
+          <div class="result-title">${displayName}</div>
+        </div>
+      </div>
+      <div class="result-sub">${totals.folders} carpetas · ${totals.files} archivos</div>
+      <div class="result-tree" id="resultTree"></div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="resultClose">Cerrar</button>
+        <button class="btn btn-primary" id="resultCreate">${ICONS.plus} Crear Proyecto</button>
+      </div>
+    </div>
+  `, (overlay) => {
+    const tree = overlay.querySelector('#resultTree');
+    extractedRoot.children.forEach(child => tree.appendChild(renderResultNode(child, 0)));
+    overlay.querySelector('#resultClose').onclick = closeModal;
+    overlay.querySelector('#resultCreate').onclick = () => {
+      const id = genId();
+      const projectRoot = { id: 'root', type: 'folder', name: 'root', open: true, children: extractedRoot.children };
+      saveProjectData(id, displayName, projectRoot);
+      registerProject(id, displayName, cover);
+      window.location.href = 'ed/co?id=' + id;
+    };
+  });
+}
+
+document.getElementById('addonInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) processAddon(file);
+  e.target.value = '';
+});
+
+const PACK_DEFS = [
+  { key:'behavior', title:'Behavior Pack', icon:ICONS.wrench, desc:'Crea nuevas mecánicas de juego y cambia el comportamiento de Minecraft.', full:true,
+    dep:{ key:'bpDependsRp', label:'Registrar el behavior pack como dependencia del resource pack' } },
+  { key:'resource', title:'Resource Pack', icon:ICONS.image, desc:'Se usa para cambiar el aspecto y sonido de Minecraft.', full:false,
+    dep:{ key:'rpDependsBp', label:'Registrar el resource pack como dependencia del behavior pack' } },
+  { key:'skin', title:'Skin Pack', icon:ICONS.person, desc:'Ofrece nuevas apariencias que un jugador puede elegir para su personaje.', full:false },
+  { key:'world', title:'World Template', icon:ICONS.globe, desc:'Crea un mundo que los usuarios puedan usar para experimentar tu proyecto.', full:true }
+];
+
+const EXPERIMENTAL_DEFS = [
+  { key:'upcomingCreator', title:'Upcoming Creator Features', icon:ICONS.clock, desc:'Habilita autocompletados para funciones experimentales de creador.' },
+  { key:'experimentalCamera', title:'Experimental Creator Camera Features', icon:ICONS.camera, desc:'Habilita autocompletados para funciones de cámara experimentales.' },
+  { key:'betaApis', title:'Beta APIs', icon:ICONS.brackets, desc:'Habilita los módulos de script en fase beta y permite crear scripts con autocompletado.' },
+  { key:'renderDragon', title:'Render Dragon Features for Creators', icon:ICONS.dragon, desc:'Habilita la creación de archivos de configuración de renderizado diferido.' },
+  { key:'educationEdition', title:'Enable Education Edition', icon:ICONS.gradCap, desc:'Habilita autocompletados para funciones educativas como recetas del reductor de materiales.' }
+];
+
+const INDIVIDUAL_FILES_DEFS = [
+  { key:'tick', name:'tick.json', pack:'Behavior Pack', target:'bp', folder:'', desc:'Define qué funciones se ejecutan en cada tick.', content:{ values: [] } },
+  { key:'player', name:'player.json', pack:'Behavior Pack', target:'bp', folder:'entities', desc:'Edita cómo se comporta el jugador por defecto.', content:{ format_version:'1.20.0', "minecraft:entity":{ description:{ identifier:'minecraft:player' }, components:{} } } },
+  { key:'blocks', name:'blocks.json', pack:'Resource Pack', target:'rp', folder:'', desc:'Define cómo se combinan las caras de los bloques.', content:{} },
+  { key:'itemTexture', name:'item_texture.json', pack:'Resource Pack', target:'rp', folder:'textures', desc:'Asigna texturas a los ítems.', content:{ resource_pack_name:'pack', texture_name:'atlas.items', texture_data:{} } },
+  { key:'terrainTexture', name:'terrain_texture.json', pack:'Resource Pack', target:'rp', folder:'textures', desc:'Asigna texturas a las caras de los bloques.', content:{ resource_pack_name:'pack', texture_name:'atlas.terrain', padding:8, num_mip_levels:4, texture_data:{} } },
+  { key:'flipbook', name:'flipbook_textures.json', pack:'Resource Pack', target:'rp', folder:'textures', desc:'Se usa para animar texturas de bloques.', content:[] },
+  { key:'biomes', name:'biomes_client.json', pack:'Resource Pack', target:'rp', folder:'', desc:'Define cómo se renderizan los efectos de cada bioma.', content:{ biomes:{} } },
+  { key:'sounds', name:'sounds.json', pack:'Resource Pack', target:'rp', folder:'', desc:'Define sonidos para funciones específicas del juego.', content:{ individual_event_sounds:{ events:{} } } },
+  { key:'soundDefs', name:'sound_definitions.json', pack:'Resource Pack', target:'rp', folder:'sounds', desc:'Registra ids de sonido para usarlos en el proyecto.', content:{ format_version:'1.14.0', sound_definitions:{} } },
+  { key:'splashes', name:'splashes.json', pack:'Resource Pack', target:'rp', folder:'texts', desc:'Define los mensajes splash de la pantalla de título.', content:{ splashes:['Hecho con ComDex!'] } }
+];
+
+document.getElementById('createBtn').addEventListener('click', () => openWizard());
+
+function openWizard(){
+  const wiz = {
+    packs:{ behavior:true, resource:true, skin:false, world:false },
+    deps:{ bpDependsRp:false, rpDependsBp:false },
+    experimental:{},
+    files:{},
+    name:'New Project',
+    description:'',
+    prefix:'',
+    author:'MatCat',
+    targetVersion: MC_VERSIONS[MC_VERSIONS.length - 1],
+    cover:null,
+    manifestFlag:false,
+    dedicatedFlag:false,
+    expOpen:false,
+    filesOpen:false
+  };
+  showModal(`
+    <div class="modal">
+      <div class="wizard-header">
+        <h3>Crear Proyecto</h3>
+        <button class="wizard-close" id="wizClose">${ICONS.close}</button>
+      </div>
+      <div class="wizard-scroll" id="wizScroll"></div>
+      <div class="wizard-footer">
+        <button class="btn btn-ghost" id="wizCancel">Cancelar</button>
+        <button class="btn btn-primary" id="wizCreate">${ICONS.plus} Crear</button>
+      </div>
+    </div>
+  `, (overlay) => {
+    renderWizardBody(overlay, wiz);
+    overlay.querySelector('#wizClose').onclick = closeModal;
+    overlay.querySelector('#wizCancel').onclick = closeModal;
+    overlay.querySelector('#wizCreate').onclick = () => submitWizard(wiz);
+  }, 'wizard-overlay');
+}
+
+function statusToggleHtml(active){
+  return active
+    ? `<span class="status-toggle on">${ICONS.checkCircle}Active</span>`
+    : `<span class="status-toggle">${ICONS.circleEmpty}Inactive</span>`;
+}
+
+function packCardHtml(def, wiz){
+  const active = wiz.packs[def.key];
+  const cls = 'pack-card' + (def.full ? '' : ' half') + (active ? ' active' : '');
+  let depHtml = '';
+  if (def.dep && active){
+    const on = wiz.deps[def.dep.key];
+    depHtml = `
+      <div class="dep-row">
+        <div class="pill-switch${on ? ' on' : ''}" data-dep="${def.dep.key}"></div>
+        <span>${def.dep.label}</span>
+      </div>
+    `;
+  }
+  return `
+    <div class="${cls}" data-pack="${def.key}">
+      <div class="pack-card-top">
+        <div class="icon-circle">${def.icon}</div>
+        <div>
+          <div class="pack-card-title">${def.title}</div>
+          ${statusToggleHtml(active)}
+        </div>
+      </div>
+      <p class="pack-desc">${def.desc}</p>
+      ${depHtml}
+    </div>
+  `;
+}
+
+function miniCardHtml(def, active, groupAttr, tag){
+  return `
+    <div class="mini-card${active ? ' active' : ''}" data-${groupAttr}="${def.key}">
+      <div class="mini-card-top">
+        <div class="icon-circle">${def.icon || ICONS.file}</div>
+        <div>
+          <div class="mini-card-title">${def.title || def.name}</div>
+          ${tag ? `<div class="mini-card-tag">${tag}</div>` : ''}
+        </div>
+      </div>
+      <div class="mini-status${active ? ' on' : ''}">${active ? ICONS.checkCircle : ICONS.circleEmpty}${active ? 'Active' : 'Inactive'}</div>
+      <p class="mini-desc">${def.desc}</p>
+    </div>
+  `;
+}
+
+function renderWizardBody(overlay, wiz){
+  const scrollBox = overlay.querySelector('#wizScroll');
+  const prevScroll = scrollBox.scrollTop;
+
+  const packsHtml = PACK_DEFS.map(def => packCardHtml(def, wiz)).join('');
+
+  const expHtml = EXPERIMENTAL_DEFS.map(def => miniCardHtml(def, !!wiz.experimental[def.key], 'exp')).join('');
+  const filesHtml = INDIVIDUAL_FILES_DEFS.map(def => miniCardHtml(def, !!wiz.files[def.key], 'file', def.pack)).join('');
+
+  const coverHtml = wiz.cover
+    ? `<img src="${wiz.cover}" alt="cover">`
+    : ICONS.image;
+
+  scrollBox.innerHTML = `
+    <div class="section-title">Tipo de paquete</div>
+    <div class="pack-grid">${packsHtml}</div>
+
+    <div class="section-title">Configuración experimental</div>
+    <div class="collapse-box${wiz.expOpen ? ' open' : ''}" id="expBox">
+      <div class="collapse-head" id="expHead">Experimental Gameplay ${ICONS.chevronDown}</div>
+      <div class="collapse-body-wrap"><div class="collapse-body-inner"><div class="collapse-body">${expHtml}</div></div></div>
+    </div>
+
+    <div class="section-title">Archivos individuales</div>
+    <div class="collapse-box${wiz.filesOpen ? ' open' : ''}" id="filesBox">
+      <div class="collapse-head" id="filesHead">Individual Files ${ICONS.chevronDown}</div>
+      <div class="collapse-body-wrap"><div class="collapse-body-inner"><div class="collapse-body">${filesHtml}</div></div></div>
+    </div>
+
+    <div class="section-title">Detalles del proyecto</div>
+    <div class="cover-row">
+      <div class="cover-picker" id="coverPicker">${coverHtml}</div>
+      <div class="form-col">
+        <label>Project Name</label>
+        <input type="text" id="wizName" value="${wiz.name}">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-col">
+        <label>Project Description (optional)</label>
+        <textarea id="wizDesc">${wiz.description}</textarea>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-col">
+        <label>Project Prefix</label>
+        <input type="text" id="wizPrefix" value="${wiz.prefix}" placeholder="prefijo">
+      </div>
+      <div class="form-col">
+        <label>Project Author</label>
+        <input type="text" id="wizAuthor" value="${wiz.author}">
+      </div>
+      <div class="form-col">
+        <label>Project Target</label>
+        <select id="wizVersion">
+          ${MC_VERSIONS.map(v => `<option value="${v}"${v === wiz.targetVersion ? ' selected' : ''}>${v}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+
+    <div class="toggle-line">
+      <span>Add pack name/description directly to the manifest</span>
+      <div class="pill-switch${wiz.manifestFlag ? ' on' : ''}" id="manifestToggle"></div>
+    </div>
+    <div class="toggle-line">
+      <span>Set project for use with Bedrock Dedicated Servers</span>
+      <div class="pill-switch${wiz.dedicatedFlag ? ' on' : ''}" id="dedicatedToggle"></div>
+    </div>
+  `;
+
+  scrollBox.scrollTop = prevScroll;
+  wireWizardEvents(overlay, wiz);
+}
+
+function wireWizardEvents(overlay, wiz){
+  overlay.querySelectorAll('[data-pack]').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('[data-dep]')) return;
+      const key = card.getAttribute('data-pack');
+      wiz.packs[key] = !wiz.packs[key];
+      renderWizardBody(overlay, wiz);
+    });
+  });
+
+  overlay.querySelectorAll('[data-dep]').forEach(sw => {
+    sw.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const key = sw.getAttribute('data-dep');
+      wiz.deps[key] = !wiz.deps[key];
+      renderWizardBody(overlay, wiz);
+    });
+  });
+
+  overlay.querySelectorAll('[data-exp]').forEach(card => {
+    card.addEventListener('click', () => {
+      const key = card.getAttribute('data-exp');
+      wiz.experimental[key] = !wiz.experimental[key];
+      renderWizardBody(overlay, wiz);
+    });
+  });
+
+  overlay.querySelectorAll('[data-file]').forEach(card => {
+    card.addEventListener('click', () => {
+      const key = card.getAttribute('data-file');
+      wiz.files[key] = !wiz.files[key];
+      renderWizardBody(overlay, wiz);
+    });
+  });
+
+  overlay.querySelector('#expHead').addEventListener('click', () => {
+    wiz.expOpen = !wiz.expOpen;
+    renderWizardBody(overlay, wiz);
+  });
+  overlay.querySelector('#filesHead').addEventListener('click', () => {
+    wiz.filesOpen = !wiz.filesOpen;
+    renderWizardBody(overlay, wiz);
+  });
+
+  overlay.querySelector('#coverPicker').addEventListener('click', () => {
+    const input = document.getElementById('coverInput');
+    input.onchange = () => {
+      const file = input.files[0];
+      if (file){
+        const reader = new FileReader();
+        reader.onload = () => {
+          wiz.cover = reader.result;
+          renderWizardBody(overlay, wiz);
+        };
+        reader.readAsDataURL(file);
+      }
+      input.value = '';
+    };
+    input.click();
+  });
+
+  overlay.querySelector('#wizName').addEventListener('input', (e) => { wiz.name = e.target.value; });
+  overlay.querySelector('#wizDesc').addEventListener('input', (e) => { wiz.description = e.target.value; });
+  overlay.querySelector('#wizPrefix').addEventListener('input', (e) => { wiz.prefix = e.target.value; });
+  overlay.querySelector('#wizAuthor').addEventListener('input', (e) => { wiz.author = e.target.value; });
+  overlay.querySelector('#wizVersion').addEventListener('change', (e) => { wiz.targetVersion = e.target.value; });
+
+  overlay.querySelector('#manifestToggle').addEventListener('click', () => {
+    wiz.manifestFlag = !wiz.manifestFlag;
+    renderWizardBody(overlay, wiz);
+  });
+  overlay.querySelector('#dedicatedToggle').addEventListener('click', () => {
+    wiz.dedicatedFlag = !wiz.dedicatedFlag;
+    renderWizardBody(overlay, wiz);
+  });
+}
+
+function addFolderNode(parent, name){
+  const f = { id: genId(), type:'folder', name, open:true, children:[] };
+  parent.children.push(f);
+  return f;
+}
+
+function addFileNode(parent, name, content){
+  parent.children.push({ id: genId(), type:'file', name, content: content || '' });
+}
+
+function getOrCreateSubfolder(parent, path){
+  if (!path) return parent;
+  const segments = path.split('/').filter(Boolean);
+  let current = parent;
+  segments.forEach(seg => {
+    let existing = current.children.find(c => c.type === 'folder' && c.name === seg);
+    if (!existing){
+      existing = addFolderNode(current, seg);
+    }
+    current = existing;
+  });
+  return current;
+}
+
+function buildProjectFromWizard(wiz){
+  const root = { id:'root', type:'folder', name:'root', open:true, children:[] };
+  const targetParts = wiz.targetVersion.split('.').map(n => parseInt(n, 10));
+  const bpId = genUUID(), rpId = genUUID(), spId = genUUID(), wtId = genUUID();
+  const projectName = wiz.name.trim() || 'New Project';
+
+  let bpFolder = null, rpFolder = null;
+
+  if (wiz.packs.behavior){
+    bpFolder = addFolderNode(root, 'BP');
+    const manifest = {
+      format_version: 2,
+      header: { name: wiz.manifestFlag ? projectName : 'pack.name', description: wiz.manifestFlag ? wiz.description : 'pack.description', uuid: bpId, version:[1,0,0], min_engine_version: targetParts },
+      modules: [{ type:'data', uuid: genUUID(), version:[1,0,0] }]
+    };
+    if (wiz.deps.bpDependsRp && wiz.packs.resource) manifest.dependencies = [{ uuid: rpId, version:[1,0,0] }];
+    addFileNode(bpFolder, 'manifest.json', JSON.stringify(manifest, null, 2));
+    if (wiz.cover) addFileNode(bpFolder, 'pack_icon.png', wiz.cover);
+    addFolderNode(bpFolder, 'scripts');
+  }
+
+  if (wiz.packs.resource){
+    rpFolder = addFolderNode(root, 'RP');
+    const manifest = {
+      format_version: 2,
+      header: { name: wiz.manifestFlag ? projectName : 'pack.name', description: wiz.manifestFlag ? wiz.description : 'pack.description', uuid: rpId, version:[1,0,0], min_engine_version: targetParts },
+      modules: [{ type:'resources', uuid: genUUID(), version:[1,0,0] }]
+    };
+    if (wiz.deps.rpDependsBp && wiz.packs.behavior) manifest.dependencies = [{ uuid: bpId, version:[1,0,0] }];
+    addFileNode(rpFolder, 'manifest.json', JSON.stringify(manifest, null, 2));
+    if (wiz.cover) addFileNode(rpFolder, 'pack_icon.png', wiz.cover);
+    addFolderNode(rpFolder, 'textures');
+  }
+
+  if (wiz.packs.skin){
+    const spFolder = addFolderNode(root, 'SP');
+    const manifest = {
+      format_version: 2,
+      header: { name: wiz.manifestFlag ? projectName : 'pack.name', description: wiz.manifestFlag ? wiz.description : 'pack.description', uuid: spId, version:[1,0,0] },
+      modules: [{ type:'skin_pack', uuid: genUUID(), version:[1,0,0] }]
+    };
+    addFileNode(spFolder, 'manifest.json', JSON.stringify(manifest, null, 2));
+    addFileNode(spFolder, 'skins.json', JSON.stringify({ serialize_name: wiz.prefix || 'skins', geometry:'geometry.humanoid.custom', skins:[] }, null, 2));
+    if (wiz.cover) addFileNode(spFolder, 'pack_icon.png', wiz.cover);
+  }
+
+  if (wiz.packs.world){
+    const wtFolder = addFolderNode(root, 'World');
+    const manifest = {
+      format_version: 2,
+      header: { name: wiz.manifestFlag ? projectName : 'pack.name', description: wiz.manifestFlag ? wiz.description : 'pack.description', uuid: wtId, version:[1,0,0] },
+      modules: [{ type:'world_template', uuid: genUUID(), version:[1,0,0] }]
+    };
+    addFileNode(wtFolder, 'manifest.json', JSON.stringify(manifest, null, 2));
+    if (wiz.cover) addFileNode(wtFolder, 'world_icon.png', wiz.cover);
+  }
+
+  INDIVIDUAL_FILES_DEFS.forEach(def => {
+    if (!wiz.files[def.key]) return;
+    const base = def.target === 'bp' ? bpFolder : rpFolder;
+    if (!base) return;
+    const target = getOrCreateSubfolder(base, def.folder);
+    addFileNode(target, def.name, JSON.stringify(def.content, null, 2));
+  });
+
+  addFileNode(root, 'README.md',
+`# ${projectName}
+
+Autor: ${wiz.author || 'MatCat'}
+Versión objetivo: ${wiz.targetVersion}
+${wiz.dedicatedFlag ? 'Configurado para Bedrock Dedicated Servers.\n' : ''}
+Proyecto generado con ComDex.
+`);
+
+  return root;
+}
+
+function submitWizard(wiz){
+  wiz.name = (wiz.name || '').trim() || 'New Project';
+  const root = buildProjectFromWizard(wiz);
+  const id = genId();
+  saveProjectData(id, wiz.name, root);
+  registerProject(id, wiz.name, wiz.cover);
+  window.location.href = 'ed/co?id=' + id;
+}
+
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+function initParticles(){
+  const count = Math.min(70, Math.floor((window.innerWidth * window.innerHeight) / 24000));
+  particles = [];
+  for (let i = 0; i < count; i++){
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 1.5 + 0.6,
+      vx: (Math.random() - 0.5) * 0.12,
+      vy: (Math.random() - 0.5) * 0.12,
+      o: Math.random() * 0.3 + 0.06
+    });
+  }
+}
+
+function tickParticles(){
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < 0) p.x = canvas.width;
+    if (p.x > canvas.width) p.x = 0;
+    if (p.y < 0) p.y = canvas.height;
+    if (p.y > canvas.height) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(133,119,248,' + p.o + ')';
+    ctx.fill();
+  });
+  requestAnimationFrame(tickParticles);
+}
+
+window.addEventListener('resize', () => { resizeCanvas(); initParticles(); });
+resizeCanvas();
+initParticles();
+tickParticles();
+renderProjects();
+</script>
+</body>
+</html>
