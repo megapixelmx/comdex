@@ -256,6 +256,8 @@ body::-webkit-scrollbar-thumb{background:var(--panel3);border-radius:8px;}
 }
 .context-menu-item:hover{background:var(--panel3);}
 .context-menu-item.danger{color:var(--danger);}
+.context-menu-item svg{width:15px;height:15px;color:var(--text-dim);flex-shrink:0;}
+.context-menu-item.danger svg{color:var(--danger);}
 
 .fmt-grid{
   display:grid;
@@ -717,7 +719,10 @@ const ICONS = {
   checkCircle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.3 2.3L16 10"/></svg>',
   circleEmpty: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/></svg>',
   plus: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>',
-  dots: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>'
+  dots: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+  download: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7.5 10.5 12 15l4.5-4.5"/><path d="M4 18v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2M6 7l1 13a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-13"/><path d="M10 11v6M14 11v6"/></svg>'
 };
 
 const FILE_TYPES = {
@@ -924,9 +929,9 @@ function renderProjects(){
       const menu = document.createElement('div');
       menu.className = 'context-menu';
       menu.innerHTML = `
-        <button class="context-menu-item" id="optRename">Renombrar</button>
-        <button class="context-menu-item" id="optDownload">Descargar</button>
-        <button class="context-menu-item danger" id="optDelete">Eliminar</button>
+        <button class="context-menu-item" id="optRename">${ICONS.edit}<span>Renombrar</span></button>
+        <button class="context-menu-item" id="optDownload">${ICONS.download}<span>Descargar</span></button>
+        <button class="context-menu-item danger" id="optDelete">${ICONS.trash}<span>Eliminar</span></button>
       `;
 
       const rect = dotsBtn.getBoundingClientRect();
@@ -1046,17 +1051,31 @@ function showDownloadModal(p){
       <p>Elige el formato de exportación para tu complemento de Minecraft.</p>
       <div class="fmt-grid">
         <div class="fmt-card active" data-fmt="mcaddon">
-          <div class="fmt-icon">${ICONS.package}</div>
+          <div class="fmt-icon"><img src="img/icons/ic1.jpg" alt="MCAddon"></div>
           <div class="fmt-info">
             <div class="fmt-name">.mcaddon</div>
-            <div class="fmt-desc">Instalación automática completa</div>
+            <div class="fmt-desc">Minecraft Addon</div>
           </div>
         </div>
         <div class="fmt-card" data-fmt="zip">
-          <div class="fmt-icon">${ICONS.file}</div>
+          <div class="fmt-icon">${ICONS.package}</div>
           <div class="fmt-info">
             <div class="fmt-name">.zip</div>
-            <div class="fmt-desc">Archivo comprimido estándar</div>
+            <div class="fmt-desc">Archivo Comprimido</div>
+          </div>
+        </div>
+        <div class="fmt-card" data-fmt="mcpack">
+          <div class="fmt-icon"><img src="img/icons/ic1.jpg" alt="MCPack"></div>
+          <div class="fmt-info">
+            <div class="fmt-name">.mcpack</div>
+            <div class="fmt-desc">Minecraft Pack</div>
+          </div>
+        </div>
+        <div class="fmt-card" data-fmt="mcworld">
+          <div class="fmt-icon"><img src="img/icons/ic1.jpg" alt="MCWorld"></div>
+          <div class="fmt-info">
+            <div class="fmt-name">.mcworld</div>
+            <div class="fmt-desc">Minecraft World</div>
           </div>
         </div>
       </div>
@@ -1085,8 +1104,7 @@ function showDownloadModal(p){
         const zip = new JSZip();
         zipAddFolder(zip, rootNode);
         const blob = await zip.generateAsync({ type: 'blob' });
-        const ext = selectedFmt === 'mcaddon' ? '.mcaddon' : '.zip';
-        const filename = (p.name || 'proyecto').replace(/[^a-z0-9_-]/gi, '_') + ext;
+        const filename = (p.name || 'proyecto').replace(/[^a-z0-9_-]/gi, '_') + '.' + selectedFmt;
 
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
